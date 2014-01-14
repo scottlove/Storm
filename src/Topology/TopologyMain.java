@@ -1,6 +1,7 @@
 package Topology;
 
 
+import backtype.storm.StormSubmitter;
 import spouts.WordReader;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
@@ -11,7 +12,7 @@ import bolts.WordNormalizer;
 
 
 public class TopologyMain {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Exception {
 
         //Topology definition
         TopologyBuilder builder = new TopologyBuilder();
@@ -21,16 +22,34 @@ public class TopologyMain {
         builder.setBolt("word-counter", new WordCounter(),1)
                 .fieldsGrouping("word-normalizer", new Fields("word"));
 
+
         //Configuration
         Config conf = new Config();
-        conf.put("wordsFile", args[0]);
-        conf.setDebug(true);
-        //Topology run
-        conf.put(Config.TOPOLOGY_MAX_SPOUT_PENDING, 1);
-        LocalCluster cluster = new LocalCluster();
-        cluster.submitTopology("Getting-Started-Topology", conf, builder.createTopology());
-        Thread.sleep(1000);
-        cluster.shutdown();
+
+        conf.setDebug(false);
+
+
+        if (args != null && args.length > 0) {
+            conf.setNumWorkers(3);
+
+
+            StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
+        }
+        else {
+            conf.setMaxTaskParallelism(3);
+
+
+            LocalCluster cluster = new LocalCluster();
+            cluster.submitTopology("word-count", conf, builder.createTopology());
+
+
+            Thread.sleep(10000);
+
+
+            cluster.shutdown();
+        }
+
+
 
     }
 }

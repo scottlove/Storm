@@ -1,25 +1,30 @@
 package spouts;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+
 import java.util.Map;
+
+import Inputters.TestInputter;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
+import backtype.storm.utils.Utils;
+import java.util.Random;
 
 public class WordReader extends BaseRichSpout {
 
     private SpoutOutputCollector collector;
-    private FileReader fileReader;
-    private boolean completed = false;
+    Random _rand;
+    TestInputter inputter;
+
+
     public void ack(Object msgId) {
         System.out.println("OK:"+msgId);
     }
     public void close() {}
+
     public void fail(Object msgId) {
         System.out.println("FAIL:"+msgId);
     }
@@ -29,47 +34,25 @@ public class WordReader extends BaseRichSpout {
      * file line
      */
     public void nextTuple() {
-        /**
-         * The nextuple it is called forever, so if we have been readed the file
-         * we will wait and then return
-         */
-        if(completed){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                //Do nothing
-            }
-            return;
+        Utils.sleep(100);
+//        String[] sentences = new String[]{ "the cow jumped over the moon", "an apple a day keeps the doctor away",
+//                "four score and seven years ago", "snow white and the seven dwarfs", "i am at two with nature" };
+//        String sentence = sentences[_rand.nextInt(sentences.length)];
+        if (inputter.iterator().hasNext())
+        {   String sentence = (String)inputter.iterator().next();
+            collector.emit(new Values(sentence));
         }
-        String str;
-        //Open the reader
-        BufferedReader reader = new BufferedReader(fileReader);
-        try{
-            //Read all lines
-            while((str = reader.readLine()) != null){
-                /**
-                 * By each line emmit a new value with the line as a their
-                 */
-                this.collector.emit(new Values(str),str);
-            }
-        }catch(Exception e){
-            throw new RuntimeException("Error reading tuple",e);
-        }finally{
-            completed = true;
-        }
+
+
     }
 
-    /**
-     * We will create the file and get the collector object
-     */
     public void open(Map conf, TopologyContext context,
                      SpoutOutputCollector collector) {
-        try {
-            this.fileReader = new FileReader(conf.get("wordsFile").toString());
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Error reading file ["+conf.get("wordFile")+"]");
-        }
+
+        inputter = new TestInputter();
         this.collector = collector;
+        _rand = new Random();
+
     }
 
     /**
