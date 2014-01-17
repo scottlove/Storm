@@ -15,6 +15,10 @@ import spouts.WordReader2;
 public class TopologyMain {
     public static void main(String[] args) throws Exception {
 
+
+
+
+
         //Topology definition
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("word-reader",new WordReader2());
@@ -27,6 +31,7 @@ public class TopologyMain {
         //Configuration
         Config conf = new Config();
 
+
         conf.setDebug(false);
 
 
@@ -38,7 +43,8 @@ public class TopologyMain {
         }
         else {
             conf.setMaxTaskParallelism(3);
-
+            conf.put("AggHost","localhost")    ;
+            conf.put("AggPort","8081")    ;
 
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology("word-count", conf, builder.createTopology());

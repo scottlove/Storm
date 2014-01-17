@@ -3,6 +3,7 @@ package bolts;
 import java.util.HashMap;
 import java.util.Map;
 
+import DataOutputter.TCPMessageSender;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -13,17 +14,25 @@ public class WordCounter extends BaseBasicBolt {
 
     Integer id;
     String name;
+    String hostname;
+    int port;
     Map<String, Integer> counters;
 
     /**
      * At the end of the spout (when the cluster is shutdown
      * We will show the word counters
+     *
      */
+
+
     @Override
     public void cleanup() {
         System.out.println("-- Word Counter ["+name+"-"+id+"] --");
+
+        TCPMessageSender s = new TCPMessageSender(8081,"localhost")   ;
         for(Map.Entry<String, Integer> entry : counters.entrySet()){
             System.out.println(entry.getKey()+": "+entry.getValue());
+            s.sendMessage(entry.getKey()+": "+entry.getValue());
         }
     }
 
@@ -32,9 +41,18 @@ public class WordCounter extends BaseBasicBolt {
      */
     @Override
     public void prepare(Map stormConf, TopologyContext context) {
+        this.hostname = stormConf.get("AggHost").toString();
+        this.port = Integer.parseInt(stormConf.get("AggPort").toString())  ;
+
         this.counters = new HashMap<String, Integer>();
         this.name = context.getThisComponentId();
         this.id = context.getThisTaskId();
+
+    }
+
+    public void OutputResults()
+    {
+
     }
 
     @Override
