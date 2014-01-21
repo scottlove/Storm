@@ -4,13 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import DataOutputter.TCPMessageSender;
+import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
+import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
 
-public class WordCounter extends BaseBasicBolt {
+public class WordCounter extends BaseRichBolt {
 
     Integer id;
     String name;
@@ -18,49 +20,46 @@ public class WordCounter extends BaseBasicBolt {
     int port;
     Map<String, Integer> counters;
 
-    /**
-     * At the end of the spout (when the cluster is shutdown
-     * We will show the word counters
-     *
-     */
+    int count;
 
+    OutputCollector _collector;
 
     @Override
-    public void cleanup() {
-        System.out.println("-- Word Counter ["+name+"-"+id+"] --");
+    public void prepare(Map conf, TopologyContext context, OutputCollector collector) {
+        _collector = collector;
 
-        TCPMessageSender s = new TCPMessageSender(8081,"localhost")   ;
+        this.counters = new HashMap<String, Integer>();
+        this.hostname = conf.get("AggHost").toString();
+        this.port = Integer.parseInt(conf.get("AggPort").toString())  ;
+        this.name = context.getThisComponentId();
+        this.id = context.getThisTaskId();
+        count =0;
+    }
+
+    private void postData()
+    {
+
+        TCPMessageSender s = new TCPMessageSender(port,hostname)   ;
         for(Map.Entry<String, Integer> entry : counters.entrySet()){
             System.out.println(entry.getKey()+": "+entry.getValue());
             s.sendMessage(entry.getKey()+": "+entry.getValue());
         }
     }
 
-    /**
-     * On create
-     */
     @Override
-    public void prepare(Map stormConf, TopologyContext context) {
-        this.hostname = stormConf.get("AggHost").toString();
-        this.port = Integer.parseInt(stormConf.get("AggPort").toString())  ;
-
-        this.counters = new HashMap<String, Integer>();
-        this.name = context.getThisComponentId();
-        this.id = context.getThisTaskId();
+    public void cleanup() {
 
     }
 
-    public void OutputResults()
-    {
 
-    }
+
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {}
 
 
     @Override
-    public void execute(Tuple input, BasicOutputCollector collector) {
+    public void execute(Tuple input) {
         String str = input.getString(0);
         /**
          * If the word dosn't exist in the map we will create
@@ -71,6 +70,13 @@ public class WordCounter extends BaseBasicBolt {
         }else{
             Integer c = counters.get(str) + 1;
             counters.put(str, c);
+        }
+
+        count ++;
+        if (count > 100)
+        {
+            count = 0;
+            postData();
         }
     }
 }
