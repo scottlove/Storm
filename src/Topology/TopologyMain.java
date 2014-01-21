@@ -2,7 +2,6 @@ package Topology;
 
 
 import backtype.storm.StormSubmitter;
-import spouts.WordReader;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.topology.TopologyBuilder;
@@ -16,7 +15,8 @@ public class TopologyMain {
     public static void main(String[] args) throws Exception {
 
 
-
+        try
+        {
 
 
         //Topology definition
@@ -36,14 +36,32 @@ public class TopologyMain {
 
 
         if (args != null && args.length > 0) {
-            conf.setNumWorkers(3);
 
+            if(args.length !=3)
+            {
+                System.out.println("production mode requires 3 params:");
+                System.out.println("topology aggHost aggPort");
+            }
+            else
+            {
+                conf.setNumWorkers(3);
+                String topology = args[0];
+                String aggHost = args[1];
+                String aggPort = args[2];
+                System.out.println("topology:" + topology);
+                System.out.println("aggHost:" + aggHost);
+                System.out.println("aggPort:" + aggPort);
 
-            StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
+                conf.put("AggHost", aggHost)    ;
+                conf.put("AggPort",aggPort)    ;
+                conf.setNumWorkers(3);
+
+                StormSubmitter.submitTopology(topology, conf, builder.createTopology());
+            }
         }
         else {
             conf.setMaxTaskParallelism(3);
-            conf.put("AggHost","localhost")    ;
+            conf.put("AggHost", "localhost")    ;
             conf.put("AggPort","8081")    ;
 
             LocalCluster cluster = new LocalCluster();
@@ -54,6 +72,11 @@ public class TopologyMain {
 
 
             cluster.shutdown();
+        }
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.toString());
         }
 
 
