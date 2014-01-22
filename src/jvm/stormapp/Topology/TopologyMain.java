@@ -1,4 +1,4 @@
-package Topology;
+package stormapp.Topology;
 
 
 import backtype.storm.StormSubmitter;
@@ -6,9 +6,9 @@ import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
-import bolts.WordCounter;
-import bolts.WordNormalizer;
-import spouts.WordReader2;
+import stormapp.bolts.WordCounter;
+import stormapp.bolts.WordNormalizer;
+import stormapp.spouts.WordReader2;
 
 
 public class TopologyMain {

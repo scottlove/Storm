@@ -1,4 +1,4 @@
-package DataOutputter;
+package stormapp.DataOutputter;
 
 import junit.framework.TestCase;
 

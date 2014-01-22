@@ -67,6 +67,7 @@
 
 
     <build>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -86,7 +87,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>Topology.TopologyMain</mainClass>
+                            <mainClass>stormapp.Topology.TopologyMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

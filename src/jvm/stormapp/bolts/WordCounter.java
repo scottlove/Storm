@@ -1,14 +1,12 @@
-package bolts;
+package stormapp.bolts;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import DataOutputter.TCPMessageSender;
+import stormapp.DataOutputter.TCPMessageSender;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
-import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
-import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
 

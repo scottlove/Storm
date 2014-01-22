@@ -1,29 +1,34 @@
-package spouts;
+package stormapp.spouts;
 
 
 import java.util.Map;
 
-import Inputters.TestInputter;
+import stormapp.Inputters.ThreadInputter;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
-import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 import java.util.Random;
 
-public class WordReader extends BaseRichSpout {
+public class WordReader2 extends BaseRichSpout {
 
     private SpoutOutputCollector collector;
     Random _rand;
-    TestInputter inputter;
+    Thread t     ;
 
 
     public void ack(Object msgId) {
         System.out.println("OK:"+msgId);
     }
-    public void close() {}
+    public void close()
+    {
+        System.out.println("WordReader2 close**************************:");
+        t.interrupt();
+
+
+    }
 
     public void fail(Object msgId) {
         System.out.println("FAIL:"+msgId);
@@ -34,24 +39,19 @@ public class WordReader extends BaseRichSpout {
      * file line
      */
     public void nextTuple() {
+        //Do nothing, threadinputter is emitting
         Utils.sleep(100);
-//        String[] sentences = new String[]{ "the cow jumped over the moon", "an apple a day keeps the doctor away",
-//                "four score and seven years ago", "snow white and the seven dwarfs", "i am at two with nature" };
-//        String sentence = sentences[_rand.nextInt(sentences.length)];
-        if (inputter.iterator().hasNext())
-        {   String sentence = (String)inputter.iterator().next();
-            collector.emit(new Values(sentence));
-        }
-
 
     }
 
     public void open(Map conf, TopologyContext context,
                      SpoutOutputCollector collector) {
 
-        inputter = new TestInputter();
+
         this.collector = collector;
         _rand = new Random();
+        t = new ThreadInputter(collector);
+        t.start();
 
     }
 
@@ -61,6 +61,4 @@ public class WordReader extends BaseRichSpout {
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("line"));
     }
-
-
 }

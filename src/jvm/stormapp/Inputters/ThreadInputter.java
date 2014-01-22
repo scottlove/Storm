@@ -1,4 +1,4 @@
-package Inputters;
+package stormapp.Inputters;
 
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.tuple.Values;

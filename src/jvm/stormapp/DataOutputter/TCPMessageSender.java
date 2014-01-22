@@ -1,4 +1,4 @@
-package DataOutputter;
+package stormapp.DataOutputter;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
