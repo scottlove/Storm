@@ -38,10 +38,12 @@ public class WordCounter extends BaseRichBolt {
     {
 
         TCPMessageSender s = new TCPMessageSender(port,hostname)   ;
+        System.out.println("posting data")             ;
         for(Map.Entry<String, Integer> entry : counters.entrySet()){
             System.out.println(entry.getKey()+": "+entry.getValue());
             s.sendMessage(entry.getKey()+": "+entry.getValue());
         }
+        System.out.println("end posting data")        ;
     }
 
     @Override
@@ -63,6 +65,8 @@ public class WordCounter extends BaseRichBolt {
          * If the word dosn't exist in the map we will create
          * this, if not We will add 1
          */
+
+        System.out.println(str)   ;
         if(!counters.containsKey(str)){
             counters.put(str, 1);
         }else{
@@ -71,7 +75,7 @@ public class WordCounter extends BaseRichBolt {
         }
 
         count ++;
-        if (count > 100)
+        if (count > 5)
         {
             count = 0;
             postData();

@@ -14,7 +14,7 @@ public class ThreadInputter extends Thread{
 
     public ThreadInputter(SpoutOutputCollector c)
     {
-        sentences = new String []{ "the cow jumped over the moon", "an apple a day keeps the doctor away",
+        sentences = new String []{ "6189cd70-e214-455e-af8c-f36645ad3d34:the cow jumped over the moon", "an apple a day keeps the doctor away",
                 "four score and seven years ago", "snow white and the seven dwarfs", "i am at two with nature" };
         rand = new Random();
         collector = c;

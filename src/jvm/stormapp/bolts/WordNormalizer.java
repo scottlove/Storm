@@ -29,9 +29,11 @@ public class WordNormalizer extends BaseRichBolt {
      */
     public void execute(Tuple input) {
         String sentence = input.getString(0);
+        System.out.println("Sentence is:" +sentence) ;
         String[] words = sentence.split(" ");
         for(String word : words){
             word = word.trim();
+            System.out.println("word is:" + word) ;
             if(!word.isEmpty()){
                 word = word.toLowerCase();
                 _collector.emit(new Values(word));

@@ -28,18 +28,21 @@ public class KafkaConsumer implements Runnable{
 
         try
         {
-        System.out.println("running ThreadInputter ***********************")    ;
+        System.out.println("running Kafka Consumer ***********************")    ;
 
+
+            String message;
             @SuppressWarnings("unchecked")
-            ConsumerIterator<byte[], byte[]> it = m_stream.iterator();
-            collector.emit(new Values("Started ThreadInputter"));
+            ConsumerIterator<byte[], byte[]> it = m_stream.iterator();;
             while (it.hasNext())
             {
-                collector.emit(new Values(new String(it.next().message())));
-                System.out.println("Thread " + m_threadNumber + ": " + new String(it.next().message()));
+                message = new String(it.next().message() );
+                collector.emit(new Values(message));
+                System.out.println("Thread " + m_threadNumber + ": " + message);
             }
 
-            collector.emit(new Values("Left ThreadInputter"));
+
+            System.out.println("ending Kafka Consumer ***********************")    ;
         }
         catch(Exception e)
         {

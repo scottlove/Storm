@@ -60,6 +60,7 @@ public class TopologyMain {
 
                 conf.setNumWorkers(3);
 
+
                 StormSubmitter.submitTopology(topology, conf, builder.createTopology());
             }
         }
@@ -74,7 +75,7 @@ public class TopologyMain {
             cluster.submitTopology("word-count", conf, builder.createTopology());
 
 
-            Thread.sleep(10000);
+            Thread.sleep(200000);
 
 
             cluster.shutdown();

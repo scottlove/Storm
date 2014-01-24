@@ -4,9 +4,6 @@ import junit.framework.TestCase;
 
 import java.util.Iterator;
 
-/**
- * Created by scotlov on 1/13/14.
- */
 
 public class TestInputterTest extends TestCase {
 

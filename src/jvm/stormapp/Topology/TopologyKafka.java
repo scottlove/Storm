@@ -9,7 +9,7 @@ import backtype.storm.tuple.Fields;
 import stormapp.bolts.WordCounter;
 import stormapp.bolts.WordNormalizer;
 import stormapp.spouts.KafkaSpout;
-import stormapp.spouts.WordReader2;
+
 
 
 public class TopologyKafka {
@@ -27,6 +27,7 @@ public class TopologyKafka {
                 .shuffleGrouping("word-reader");
         builder.setBolt("word-counter", new WordCounter(),1)
                 .fieldsGrouping("word-normalizer", new Fields("word"));
+
 
 
         //Configuration
@@ -83,9 +84,9 @@ public class TopologyKafka {
             cluster.submitTopology("word-count", conf, builder.createTopology());
 
 
-            Thread.sleep(10000);
+            Thread.sleep(2000000);
 
-
+            System.out.println("shutting down...........")   ;
             cluster.shutdown();
         }
         }

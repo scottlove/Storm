@@ -1,13 +1,12 @@
 package stormapp.spouts;
 
+
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
-import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
-import backtype.storm.zookeeper__init;
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
@@ -52,24 +51,19 @@ public class KafkaSpout extends BaseRichSpout {
 
     }
 
-    public void open(Map conf, TopologyContext context,
-                     SpoutOutputCollector collector) {
-
+    public void startKafkaThread(Map conf)
+    {
 
 
         String topic = conf.get("topic").toString();;
         String zookeeper = conf.get("zookeeper").toString();
         String groupID = conf.get("groupID").toString();
         int threads = Integer.parseInt(conf.get("kafkaThreads").toString());
-
-        System.out.println();
-        System.out.println();
         System.out.println("topic:" + topic);
         System.out.println("zookeeper:" + zookeeper);
         System.out.println("groupID:" + groupID);
         System.out.println("kafka threads:" + threads);
-        System.out.println();
-        System.out.println();
+
 
         consumer = kafka.consumer.Consumer.createJavaConsumerConnector(createConsumerConfig(zookeeper, groupID));
 
@@ -90,6 +84,16 @@ public class KafkaSpout extends BaseRichSpout {
             executor.submit(c);
             threadNumber++;
         }
+
+    }
+
+
+    public void open(Map conf, TopologyContext context,
+                     SpoutOutputCollector collector) {
+        this.collector = collector;
+
+
+        startKafkaThread(conf);
 
     }
 
