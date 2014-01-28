@@ -29,9 +29,17 @@ public class WordNormalizer extends BaseRichBolt {
      */
     public void execute(Tuple input) {
         String sentence = input.getString(0);
+
         System.out.println("Sentence is:" +sentence) ;
-        String [] temp = sentence.split("\\:");
-        String[] words = temp[1].split(" ");
+        String[] words;
+        if (sentence.contains("\\:"))
+        {
+            String [] temp = sentence.split("\\:");
+            words = temp[1].split(" ");
+        }
+        else
+            words = sentence.split("");
+
         for(String word : words){
             word = word.trim();
             System.out.println("word is:" + word) ;

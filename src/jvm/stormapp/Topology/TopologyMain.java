@@ -7,6 +7,7 @@ import backtype.storm.LocalCluster;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import stormapp.bolts.WordCounter;
+import stormapp.bolts.WordCounterStub;
 import stormapp.bolts.WordNormalizer;
 import stormapp.spouts.WordReader2;
 
@@ -24,8 +25,10 @@ public class TopologyMain {
         builder.setSpout("word-reader",new WordReader2());
         builder.setBolt("word-normalizer", new WordNormalizer())
                 .shuffleGrouping("word-reader");
-        builder.setBolt("word-counter", new WordCounter(),1)
-                .fieldsGrouping("word-normalizer", new Fields("word"));
+        builder.setBolt("word-counter", new WordCounterStub(),1)
+                 .fieldsGrouping("word-normalizer", new Fields("word"));
+       // builder.setBolt("word-counter", new WordCounter(),1)
+         //       .fieldsGrouping("word-normalizer", new Fields("word"));
 
 
         //Configuration

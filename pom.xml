@@ -39,7 +39,7 @@
             <version>0.9.0.1</version>
             <!--scope>compile</scope-->
             <!--scope>provided</scope-->
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
